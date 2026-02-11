@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -105,8 +106,8 @@
     <div class="hud-corner bl"></div><div class="hud-corner br"></div>
 
     <div id="setup-ui">
-        <h1 class="main-title">تحليل ذكي للوجه</h1>
-        <span class="sub-title">جاهز لتحليل وجهك بالذكاء الاصطناعي</span>
+        <h1 class="main-title">التحليل الذكي للقضيب</h1>
+        <span class="sub-title">اكتشف حجم وقوة قضيبك باستخدام الذكاء الاصطناعي</span>
         
         <div class="viewport-container">
             <div class="viewport">
@@ -128,12 +129,12 @@
     </div>
 
     <div id="results">
-        <h1 class="main-title">تقرير البصمة الجمالية</h1>
+        <h1 class="main-title">نتائج التحليل</h1>
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-val" id="v1">--</span><span class="stat-label">التماثل</span></div>
-            <div class="stat-card"><span class="stat-val" id="v2">--</span><span class="stat-label">هيكل الفك</span></div>
-            <div class="stat-card"><span class="stat-label">نقاء البشرة</span><span class="stat-val" id="v3">--</span></div>
-            <div class="stat-card"><span class="stat-label">المعدل العام</span><span class="stat-val" id="v4">--</span></div>
+            <div class="stat-card"><span class="stat-val" id="v1">--</span><span class="stat-label">حجم القضيب</span></div>
+            <div class="stat-card"><span class="stat-val" id="v2">--</span><span class="stat-label">سمك القضيب</span></div>
+            <div class="stat-card"><span class="stat-label">قوة الانتصاب</span><span class="stat-val" id="v3">--</span></div>
+            <div class="stat-card"><span class="stat-label">نظافة القضيب</span><span class="stat-val" id="v4">--</span></div>
         </div>
         <canvas id="myChart"></canvas>
         <button class="btn" style="margin-top:25px;" onclick="location.reload()">تحديث البيانات</button>
@@ -295,7 +296,7 @@
         new Chart(document.getElementById('myChart'), {
             type: 'radar',
             data: {
-                labels: ['التماثل', 'الفك', 'البشرة', 'العيون', 'الأنف', 'النسبة'],
+                labels: ['الحجم', 'السمك', 'البشرة', 'الجبهة', 'الانتصاب', 'القوة'],
                 datasets: [{
                     data: [d.v1, d.v2, d.v3, 87, 89, d.v4],
                     backgroundColor: 'rgba(99, 102, 241, 0.2)',
@@ -308,4 +309,3 @@
 </script>
 </body>
 </html>
-
